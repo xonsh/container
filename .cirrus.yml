@@ -1,6 +1,4 @@
-container_task:
-  container:
-    dockerfile: Dockerfile
+docker_builder:
   only_if: $CIRRUS_BRANCH == 'master'
   env:
     # FIXME: Use a dedicated bot account
@@ -8,4 +6,5 @@ container_task:
     DOCKER_PASSWORD: ENCRYPTED[796e78aee803dc3b8412126a6e89996118b5c0c2a20b911d44fdab694fff8b3cab3cfc89ea896b600b7c79cd8f5288e3]
   script:
   - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  - python3 -m pip install xonsh
   - ./rebuild.xsh
