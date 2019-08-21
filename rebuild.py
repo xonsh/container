@@ -18,7 +18,10 @@ LABEL "repository"="http://github.com/xonsh/container"
 LABEL "homepage"="https://xon.sh/"
 LABEL "maintainer"="Jamie Bliss <jamie@ivyleav.es>"
 
-RUN ["pip", "install", "--no-cache-dir", "--disable-pip-version-check", "xonsh[linux]{specifier}"]
+RUN pip install --no-cache-dir --disable-pip-version-check xonsh[linux]{specifier} && \
+    ln -s $(which xonsh) /usr/bin/xonsh
+
+CMD ["/usr/bin/xonsh"]
 """
 
 
