@@ -42,15 +42,15 @@ def build_dockerfile(fobj, *, variant=None, version=None):
 
 def rebuild_branch(version, variant, *, unversioned=False):
     if variant:
-        tags = [f"astraluma/xonsh:{version}-{variant}"]
+        tags = [f"xonsh/xonsh:{version}-{variant}"]
     else:
-        tags = [f"astraluma/xonsh:{version}"]
+        tags = [f"xonsh/xonsh:{version}"]
 
     if unversioned:
         if variant:
-            tags += [f"astraluma/xonsh:{variant}"]
+            tags += [f"xonsh/xonsh:{variant}"]
         else:
-            tags += [f"astraluma/xonsh:latest"]
+            tags += [f"xonsh/xonsh:latest"]
 
     with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8') as ntf:
         build_dockerfile(ntf, version=version, variant=variant)
