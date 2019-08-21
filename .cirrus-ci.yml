@@ -1,0 +1,9 @@
+container_task:
+  container:
+    dockerfile: Dockerfile
+  only_if: $CIRRUS_BRANCH == 'master'
+  env:
+    DOCKER_USERNAME: ENCRYPTED[...]
+    DOCKER_PASSWORD: ENCRYPTED[...]
+  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  build_script: release.xsh
