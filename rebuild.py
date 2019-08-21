@@ -1,9 +1,8 @@
-#!/usr/bin/env xonsh
+#!/usr/bin/python3
 import urllib.request
 import json
 import tempfile
-
-$RAISE_SUBPROC_ERROR = True
+import subprocess
 
 VARIANTS = [
     '',
@@ -58,11 +57,17 @@ def rebuild_branch(version, variant, *, unversioned=False):
         build_dockerfile(ntf, version=version, variant=variant)
         ntf.flush()
 
-        docker build @([f"--tag={t}" for t in tags]) -f @(ntf.name) .
+        subprocess.run(
+            ["docker", "build", *(f"--tag={t}" for t in tags), "-f", ntf.name, "."],
+            check=True,
+        )
 
     for t in tags:
         print(f"== Pushing {t} ==")
-        docker push @(t)
+        subprocess.run(
+            ["docker", "push", t],
+            check=True,
+        )
 
 
 metadata = get_json("https://pypi.org/pypi/xonsh/json")
