@@ -1,7 +1,9 @@
 #!/usr/bin/env xonsh
 import urllib.request
 import json
+import tempfile
 
+$RAISE_SUBPROC_ERROR = True
 
 VARIANTS = [
     '',
@@ -26,13 +28,13 @@ def get_json(url):
         return json.load(resp)
 
 
-def build_dockerfile(*, variant=None, version=None):
+def build_dockerfile(fobj, *, variant=None, version=None):
     """
     Write out a Dockerfile for the given variant and xonsh version.
 
     Variant should match one of the python container tag suffixes (eg slim, alpine)
     """
-    p"Dockerfile".write_text(DF_TEMPLATE.format(
+    fobj.write(DF_TEMPLATE.format(
         variant=f"-{variant}" if variant else "",
         specifier=f"=={version}" if version else ""
     ))
@@ -40,34 +42,35 @@ def build_dockerfile(*, variant=None, version=None):
 
 def rebuild_branch(version, variant, *, unversioned=False):
     if variant:
-        branch = f"{version}-{variant}"
+        tags = [f"astraluma/xonsh:{version}-{variant}"]
     else:
-        branch = version
-    git checkout master
-    git checkout -B @(branch)
-
-    build_dockerfile(version=version, variant=variant)
-
-    git commit -am "Build Dockerfile"
-    # git push --force origin @(branch)
+        tags = [f"astraluma/xonsh:{version}"]
 
     if unversioned:
         if variant:
-            branch = variant
+            tags += [f"astraluma/xonsh:{variant}"]
         else:
-            branch = 'latest'
-        # We're currently on the post-generated commit, so just branch and push
-        git checkout -B @(branch)
-        # git push --force origin @(branch)
+            tags += [f"astraluma/xonsh:latest"]
+
+    with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8') as ntf:
+        build_dockerfile(ntf, version=version, variant=variant)
+        ntf.flush()
+
+        docker build @([f"--tag={t}" for t in tags]) -f @(ntf.name) .
+
+    for t in tags:
+        docker push @(t)
 
 
 metadata = get_json("https://pypi.org/pypi/xonsh/json")
 
 latest = metadata['info']['version']
-versions = metadata['releases'].keys()
 
-for version in versions:
-    for variant in VARIANTS:
-        rebuild_branch(version, variant, unversioned=(version == latest))
+# Do this to publish all versions
+# versions = metadata['releases'].keys()
+# for version in versions:
+#     for variant in VARIANTS:
+#         rebuild_branch(version, variant, unversioned=(version == latest))
 
-git checkout master
+for variant in VARIANTS:
+    rebuild_branch(latest, variant, unversioned=True)
