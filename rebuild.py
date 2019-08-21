@@ -51,7 +51,7 @@ def rebuild_branch(version, variant, *, unversioned=False):
         else:
             tags += [f"xonsh/xonsh:latest"]
 
-    print(f"== Building {version} {variant} ==")
+    print(f"== Building {version} {variant} ==", flush=True)
 
     with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8') as ntf:
         build_dockerfile(ntf, version=version, variant=variant)
@@ -63,7 +63,7 @@ def rebuild_branch(version, variant, *, unversioned=False):
         )
 
     for t in tags:
-        print(f"== Pushing {t} ==")
+        print(f"== Pushing {t} ==", flush=True)
         subprocess.run(
             ["docker", "push", t],
             check=True,
@@ -82,4 +82,4 @@ latest = metadata['info']['version']
 
 for variant in VARIANTS:
     rebuild_branch(latest, variant, unversioned=True)
-    print("")
+    print("", flush=True)
