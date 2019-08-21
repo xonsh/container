@@ -8,5 +8,4 @@ docker_builder:
     - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   build_script:
     - docker build -t builder .
-    - docker run -v /var/run/docker.sock:/var/run/docker.sock \
-           -t builder /rebuild.xsh
+    - docker run -v /var/run/docker.sock:/var/run/docker.sock -t builder /rebuild.xsh
