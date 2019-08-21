@@ -4,10 +4,9 @@ docker_builder:
     # FIXME: Use a dedicated bot account
     DOCKER_USERNAME: ENCRYPTED[474462a5347b3cc182acff4676be1de62aebf241c42e7a57aaa62d4d5511be732d2ac56fb1f041dfd37bfa2fb9df4c9a]
     DOCKER_PASSWORD: ENCRYPTED[796e78aee803dc3b8412126a6e89996118b5c0c2a20b911d44fdab694fff8b3cab3cfc89ea896b600b7c79cd8f5288e3]
-  setup_script:
-    - python3 -m ensurepip
-    - python3 -m pip install xonsh
   login_script:
     - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   build_script:
-    - ./rebuild.xsh
+    - docker build -t builder .
+    - docker run -v /var/run/docker.sock:/var/run/docker.sock \
+           -t builder /rebuild.xsh
