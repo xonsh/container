@@ -56,13 +56,14 @@ def rebuild_branch(version, variant, *, unversioned=False):
 
     print(f"== Building {version} {variant} ==", flush=True)
 
-    with tempfile.NamedTemporaryFile(mode='w+t', encoding='utf-8') as ntf:
+    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as ntf:
         build_dockerfile(ntf, version=version, variant=variant)
         ntf.flush()
+        ntf.seek(0)
 
         subprocess.run(
-            ["docker", "build", *(f"--tag={t}" for t in tags), "-f", ntf.name, "."],
-            check=True,
+            ["docker", "build", *(f"--tag={t}" for t in tags), "-"],
+            stdin=ntf, check=True,
         )
 
     for t in tags:
