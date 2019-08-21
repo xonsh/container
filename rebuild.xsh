@@ -36,7 +36,6 @@ def build_dockerfile(*, variant=None, version=None):
         variant=f"-{variant}" if variant else "",
         specifier=f"=={version}" if version else ""
     ))
-    git add Dockerfile
 
 
 def rebuild_branch(version, variant, *, unversioned=False):
