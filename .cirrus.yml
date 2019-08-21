@@ -5,5 +5,6 @@ container_task:
   env:
     DOCKER_USERNAME: ENCRYPTED[...]
     DOCKER_PASSWORD: ENCRYPTED[...]
-  login_script: docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-  build_script: release.xsh
+  script:
+  - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  - release.xsh
