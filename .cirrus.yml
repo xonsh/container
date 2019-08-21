@@ -6,6 +6,7 @@ docker_builder:
     DOCKER_PASSWORD: ENCRYPTED[796e78aee803dc3b8412126a6e89996118b5c0c2a20b911d44fdab694fff8b3cab3cfc89ea896b600b7c79cd8f5288e3]
   login_script:
     - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
-  build_script:
+  prep_script:
     - docker build -t builder .
+  build_script:
     - docker run -v /var/run/docker.sock:/var/run/docker.sock -t builder /rebuild.xsh
