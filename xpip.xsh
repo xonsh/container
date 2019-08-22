@@ -1,2 +1,3 @@
 #!/usr/bin/xonsh
-xpip @($ARGS[1:])
+# Because this is specifically for calling from Dockerfile, do some defaults
+xpip --no-cache-dir --disable-pip-version-check @($ARGS[1:])
