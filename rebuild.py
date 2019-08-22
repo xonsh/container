@@ -20,6 +20,7 @@ LABEL "maintainer"="Jamie Bliss <jamie@ivyleav.es>"
 
 RUN pip install --no-cache-dir --disable-pip-version-check xonsh[linux]{specifier} && \
     ln -s $(which xonsh) /usr/bin/xonsh
+COPY xpip.xsh /usr/bin/xpip
 
 CMD ["/usr/bin/xonsh"]
 """
@@ -62,7 +63,7 @@ def rebuild_branch(version, variant, *, unversioned=False):
         ntf.seek(0)
 
         subprocess.run(
-            ["docker", "build", *(f"--tag={t}" for t in tags), "-"],
+            ["docker", "build", *(f"--tag={t}" for t in tags), "-f-", "."],
             stdin=ntf, check=True,
         )
 
