@@ -3,8 +3,9 @@ Xonsh is a Python-powered, cross-platform, Unix-gazing shell language and comman
 
 ## Additions
 
-* There is a command `xpip` usable from Dockerfiles/etc to enable installing
-  Python packages into the xonsh environment
+* `/usr/bin/xpip`: `xpip` usable from Dockerfiles/etc to enable installing
+  Python packages into the xonsh environment. Doesn't require cleanup.
+* `/usr/bin/xonsh`: xonsh itself.
 
 ## Tags
 
