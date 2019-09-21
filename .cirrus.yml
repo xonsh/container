@@ -3,7 +3,7 @@ docker_builder:
   env:
     # FIXME: Use a dedicated bot account
     DOCKER_USERNAME: ENCRYPTED[474462a5347b3cc182acff4676be1de62aebf241c42e7a57aaa62d4d5511be732d2ac56fb1f041dfd37bfa2fb9df4c9a]
-    DOCKER_PASSWORD: ENCRYPTED[796e78aee803dc3b8412126a6e89996118b5c0c2a20b911d44fdab694fff8b3cab3cfc89ea896b600b7c79cd8f5288e3]
+    DOCKER_PASSWORD: ENCRYPTED[a9bd28e9496289be036b1741cf82712354ee3c00e2c186971a47a0d2957e1b57353610decb531a908f38db604fcdbf0e]
   login_script:
     - docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
   build_script:
