@@ -37,6 +37,7 @@ if token is not None:
     except ImportError:
         pass
     else:
+        gqlmod.enable_gql_import()
         cm = gqlmod.with_provider('github', token=token)
         cm.__enter__()
         # This is only to avoid warnings at exit
