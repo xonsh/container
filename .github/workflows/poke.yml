@@ -11,6 +11,7 @@ jobs:
   poke:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@master
     - uses: ./.github/actions/cirrus-poke
       with:
         CIRRUS_TOKEN: ${{ secrets.CIRRUS_TOKEN }}
