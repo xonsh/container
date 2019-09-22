@@ -20,3 +20,5 @@ with gqlmod.with_provider('cirrus-ci', token=$INPUT['CIRRUS_TOKEN']):
         repo=repo_id, branch=$INPUT['BRANCH'], mut=f"rebuild-{repo_id}",
     )
     assert not res.errors, repr(res.errors)
+
+    print(f"Started build https://cirrus-ci.com/build/{res.data['createBuild']['build']['id']}")
