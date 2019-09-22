@@ -16,5 +16,7 @@ with gqlmod.with_provider('cirrus-ci', token=$INPUT['CIRRUS_TOKEN']):
     assert not res.errors, repr(res.errors)
     repo_id = res.data['githubRepository']['id']
 
-    res = cirrus.start_fresh_build(repo=repo_id, branch=$INPUT['BRANCH'])
+    res = cirrus.start_fresh_build(
+        repo=repo_id, branch=$INPUT['BRANCH'], mut=f"rebuild-{repo_id}",
+    )
     assert not res.errors, repr(res.errors)
