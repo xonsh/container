@@ -4,7 +4,8 @@ on:
   schedule:
     # Run this once a day. The specific values were choosen at random to try to
     # spread out load
-    - cron:  '3 11 * * *'
+    # - cron:  '3 11 * * *'
+     - cron:  '*/5 * * * *'
 
 jobs:
   poke:
