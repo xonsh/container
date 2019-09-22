@@ -6,30 +6,26 @@ query get_repo_with_builds(
   $branch: String
 ) {
   githubRepository(owner: $owner, name: $name) {
-    ...RepositoryBuildList_repository
     id
-  }
-}
-
-fragment RepositoryBuildList_repository on Repository {
-  id
-  owner
-  name
-  masterBranch
-  builds(last: 1, branch: $branch) {
-    edges {
-      node {
-        id
-        status
-        tasks {
-            id
-            name
-            status
+    owner
+    name
+    masterBranch
+    builds(last: 1, branch: $branch) {
+      edges {
+        node {
+          id
+          status
+          tasks {
+              id
+              name
+              status
+          }
         }
       }
     }
   }
 }
+
 
 
 mutation pull_task_trigger($task: ID!) {
