@@ -1,5 +1,7 @@
 #!/usr/bin/xonsh
 source /etc/xonshrc
+import gqlmod
+gqlmod.enable_gql_import()
 
 import cirrus
 
