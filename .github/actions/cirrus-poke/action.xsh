@@ -16,7 +16,5 @@ with gqlmod.with_provider('cirrus-ci', token=$INPUT['CIRRUS_TOKEN']):
     assert not res.errors, repr(res.errors)
     repo_id = res.data['githubRepository']['id']
 
-    print({k: v for k, v in $INPUT.items() if 'TOKEN' not in k})
-
-    res = cirrus.start_fresh_build(repo=repo_id, branch=$INPUT['branch'])
+    res = cirrus.start_fresh_build(repo=repo_id, branch=$INPUT['BRANCH'])
     assert not res.errors, repr(res.errors)
