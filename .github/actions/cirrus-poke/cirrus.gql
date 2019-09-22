@@ -1,0 +1,61 @@
+#~cirrus-ci~
+
+query get_repo_with_builds(
+  $owner: String!
+  $name: String!
+  $branch: String
+) {
+  githubRepository(owner: $owner, name: $name) {
+    ...RepositoryBuildList_repository
+    id
+  }
+}
+
+fragment RepositoryBuildList_repository on Repository {
+  id
+  owner
+  name
+  masterBranch
+  builds(last: 1, branch: $branch) {
+    edges {
+      node {
+        id
+        status
+        tasks {
+            id
+            name
+            status
+        }
+      }
+    }
+  }
+}
+
+
+mutation pull_task_trigger($task: ID!) {
+  trigger(input: {
+    taskId: $task
+  }) {
+    task {
+      id
+    }
+  }
+}
+
+
+mutation start_fresh_build(
+  $repo: ID!
+  $branch: String!
+  $sha: String
+) {
+  createBuild(input: {
+    repositoryId: $repo
+    branch: $branch
+    sha: String
+    # configOverride  # What is this??
+  }) {
+    build {
+      id
+    }
+  }
+}
