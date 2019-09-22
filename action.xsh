@@ -45,3 +45,11 @@ if token is not None:
         del cm
 
 del token
+
+
+try:
+    import gqlmod
+except ImportError:
+    pass
+else:
+    gqlmod.enable_gql_import()
