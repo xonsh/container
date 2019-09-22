@@ -51,7 +51,7 @@ mutation start_fresh_build(
   createBuild(input: {
     repositoryId: $repo
     branch: $branch
-    sha: String
+    sha: $sha
     # configOverride  # What is this??
   }) {
     build {

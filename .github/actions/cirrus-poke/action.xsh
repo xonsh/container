@@ -1,8 +1,12 @@
 #!/usr/bin/xonsh
-source /etc/xonshrc
 import gqlmod
 gqlmod.enable_gql_import()
 
+import sys
+sys.path.insert(0, "/opt/action")
+
+
+source /etc/xonshrc
 import cirrus
 
 owner, repo = $GITHUB_REPOSITORY.split('/', 1)
