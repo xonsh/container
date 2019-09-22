@@ -3,6 +3,7 @@ import urllib.request
 import json
 import tempfile
 import subprocess
+from pathlib import Path
 
 VARIANTS = [
     '',
@@ -11,54 +12,40 @@ VARIANTS = [
 ]
 
 
-DF_TEMPLATE = """
-FROM python:3{variant}
-
-LABEL "repository"="http://github.com/xonsh/container"
-LABEL "homepage"="https://xon.sh/"
-LABEL "maintainer"="Jamie Bliss <jamie@ivyleav.es>"
-
-RUN pip install --no-cache-dir --disable-pip-version-check xonsh[linux]{specifier} && \
-    ln -s $(which xonsh) /usr/bin/xonsh
-COPY xpip.xsh /usr/bin/xpip
-
-CMD ["/usr/bin/xonsh"]
-"""
-
-
 def get_json(url):
     with urllib.request.urlopen(url) as resp:
         return json.load(resp)
 
 
-def build_dockerfile(fobj, *, variant=None, version=None):
+def build_dockerfile(fobj, *, which='xonsh', variant=None, version=None):
     """
     Write out a Dockerfile for the given variant and xonsh version.
 
     Variant should match one of the python container tag suffixes (eg slim, alpine)
     """
-    fobj.write(DF_TEMPLATE.format(
-        variant=f"-{variant}" if variant else "",
+    fobj.write(Path(f"templates/Dockerfile.{which}").read_text().format(
+        dashvariant=f"-{variant}" if variant else "",
+        colonvariant=f":{variant}" if variant else "",
         specifier=f"=={version}" if version else ""
     ))
 
 
-def rebuild_branch(version, variant, *, unversioned=False):
+def rebuild_branch(which, version, variant, *, unversioned=False):
     if variant:
-        tags = [f"xonsh/xonsh:{version}-{variant}"]
+        tags = [f"xonsh/{which}:{version}-{variant}"]
     else:
-        tags = [f"xonsh/xonsh:{version}"]
+        tags = [f"xonsh/{which}:{version}"]
 
     if unversioned:
         if variant:
-            tags += [f"xonsh/xonsh:{variant}"]
+            tags += [f"xonsh/{which}:{variant}"]
         else:
-            tags += [f"xonsh/xonsh:latest"]
+            tags += [f"xonsh/{which}:latest"]
 
-    print(f"== Building {version} {variant} ==", flush=True)
+    print(f"== Building {which} {version} {variant} ==", flush=True)
 
     with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as ntf:
-        build_dockerfile(ntf, version=version, variant=variant)
+        build_dockerfile(ntf, which=which, version=version, variant=variant)
         ntf.flush()
         ntf.seek(0)
 
@@ -85,6 +72,7 @@ latest = metadata['info']['version']
 #     for variant in VARIANTS:
 #         rebuild_branch(version, variant, unversioned=(version == latest))
 
-for variant in VARIANTS:
-    rebuild_branch(latest, variant, unversioned=True)
-    print("", flush=True)
+for container in ('xonsh', 'action'):
+    for variant in VARIANTS:
+        rebuild_branch(container, latest, variant, unversioned=True)
+        print("", flush=True)
