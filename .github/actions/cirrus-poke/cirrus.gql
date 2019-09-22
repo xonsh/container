@@ -43,7 +43,7 @@ mutation start_fresh_build(
   $repo: ID!
   $branch: String!
   $sha: String
-  $mut: ID!  # Apparently not as optional as the schema suggests
+  $mut: String!  # Apparently not as optional as the schema suggests
 ) {
   createBuild(input: {
     repositoryId: $repo
