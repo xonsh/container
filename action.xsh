@@ -24,28 +24,12 @@ else:
     token = None
 
 
-if token is not None:
-    try:
-        import github
-    except ImportError:
-        pass
-    else:
-        $GITHUB = github.Github(token)
-
-    try:
-        import gqlmod
-    except ImportError:
-        pass
-    else:
-        gqlmod.enable_gql_import()
-        cm = gqlmod.with_provider('github', token=token)
-        cm.__enter__()
-        # This is only to avoid warnings at exit
-        events.on_exit(cm.__exit__)
-        del cm
-
-del token
-
+try:
+    import github
+except ImportError:
+    pass
+else:
+    $GITHUB = github.Github(token)
 
 try:
     import gqlmod
@@ -53,3 +37,10 @@ except ImportError:
     pass
 else:
     gqlmod.enable_gql_import()
+    cm = gqlmod.with_provider('github', token=token)
+    cm.__enter__()
+    # This is only to avoid warnings at exit
+    events.on_exit(cm.__exit__)
+    del cm
+
+del token
