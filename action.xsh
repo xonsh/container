@@ -40,7 +40,8 @@ else:
     cm = gqlmod.with_provider('github', token=token)
     cm.__enter__()
     # This is only to avoid warnings at exit
-    events.on_exit(lambda **_: cm.__exit__())
+    # (Odd construction to allow scope cleanup)
+    events.on_exit(lambda _func=cm.__exit__, **_: _func(None, None, None))
     del cm
 
 del token
