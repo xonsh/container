@@ -72,7 +72,7 @@ latest = metadata['info']['version']
 #     for variant in VARIANTS:
 #         rebuild_branch(version, variant, unversioned=(version == latest))
 
-for container in ('xonsh', 'action'):
+for container in ('xonsh', 'action', 'interactive'):
     for variant in VARIANTS:
         rebuild_branch(container, latest, variant, unversioned=True)
         print("", flush=True)
