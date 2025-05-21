@@ -1,3 +1,5 @@
+# This is mostly run by Cirrus's cron feature
+# See builds at https://cirrus-ci.com/github/xonsh/container
 docker_builder:
   only_if: $CIRRUS_BRANCH == 'main'
   env:
