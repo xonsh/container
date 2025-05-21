@@ -1,5 +1,7 @@
+# This is mostly run by Cirrus's cron feature
+# See builds at https://cirrus-ci.com/github/xonsh/container
 docker_builder:
-  only_if: $CIRRUS_BRANCH == 'master'
+  only_if: $CIRRUS_BRANCH == 'main'
   env:
     # FIXME: Use a dedicated bot account
     DOCKER_USERNAME: ENCRYPTED[474462a5347b3cc182acff4676be1de62aebf241c42e7a57aaa62d4d5511be732d2ac56fb1f041dfd37bfa2fb9df4c9a]
