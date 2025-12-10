@@ -1,6 +1,6 @@
 FROM python:3.11{dashvariant}
 
-LABEL "repository"="http://github.com/xonsh/container"
+LABEL "repository"="https://github.com/xonsh/container"
 LABEL "homepage"="https://xon.sh/"
 LABEL "maintainer"="Jamie Bliss <jamie@ivyleav.es>"
 
