@@ -1,12 +1,10 @@
 # Baseline stuff for actions
 
-import json
-
-$GITHUB_EVENT = json.loads(p"$GITHUB_EVENT_PATH".read_text())
+$GITHUB_EVENT = @.imp.json.loads(p"$GITHUB_EVENT_PATH".read_text())
 
 $INPUT = {
     k[len('INPUT_'):]: v
-    for k, v in ${...}.items()
+    for k, v in @.env.items()
     if k.startswith('INPUT_')
 }
 
@@ -18,7 +16,7 @@ $INPUT = {
 
 if 'GITHUB_TOKEN' in $INPUT:
     token = $INPUT['GITHUB_TOKEN']
-elif 'GITHUB_TOKEN' in ${...}:
+elif 'GITHUB_TOKEN' in @.env:
     token = $GITHUB_TOKEN
 else:
     token = None
