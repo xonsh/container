@@ -57,8 +57,6 @@ def rebuild_branch(container_name, source_dockerfile:Path, version, variant, *, 
         subprocess.run(["docker", "push", t], check=True,)
 
 
-metadata = get_json("https://pypi.org/pypi/xonsh/json")
-metadata_latest_version = metadata['info']['version']
 
 # Do this to publish all versions
 # versions = metadata['releases'].keys()
@@ -66,13 +64,17 @@ metadata_latest_version = metadata['info']['version']
 #     for variant in VARIANTS:
 #         rebuild_branch(version, variant, unversioned=(version == latest))
 
-for base_dockerfile in Path('./containers/').glob('*/Dockerfile'):
-    base_name = base_dockerfile.parent.name
-    for variant in VARIANTS:
-        print(f"Build {base_name}:{variant}", flush=True)
-        rebuild_branch(base_name, base_dockerfile, metadata_latest_version, variant, unversioned=True)
-        for child_dockerfile in base_dockerfile.glob('*/Dockerfile'):
-            child_name = child_dockerfile.parent.name
-            container_name = f"{base_name}-{child_name}"
-            print(f"Build {container_name}:{variant}", flush=True)
-            rebuild_branch(container_name, child_dockerfile, metadata_latest_version, variant, unversioned=True)
+if __name__ == '__main__':
+    metadata = get_json("https://pypi.org/pypi/xonsh/json")
+    metadata_latest_version = metadata['info']['version']
+
+    for base_dockerfile in Path('./containers/').glob('*/Dockerfile'):
+        base_name = base_dockerfile.parent.name
+        for variant in VARIANTS:
+            print(f"Build {base_name}:{variant}", flush=True)
+            rebuild_branch(base_name, base_dockerfile, metadata_latest_version, variant, unversioned=True)
+            for child_dockerfile in base_dockerfile.glob('*/Dockerfile'):
+                child_name = child_dockerfile.parent.name
+                container_name = f"{base_name}-{child_name}"
+                print(f"Build {container_name}:{variant}", flush=True)
+                rebuild_branch(container_name, child_dockerfile, metadata_latest_version, variant, unversioned=True)
