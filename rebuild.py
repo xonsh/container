@@ -67,12 +67,12 @@ metadata_latest_version = metadata['info']['version']
 #         rebuild_branch(version, variant, unversioned=(version == latest))
 
 for base_dockerfile in Path('./containers/').glob('*/Dockerfile'):
-    base_container_name = base_dockerfile.parent.name
+    base_name = base_dockerfile.parent.name
     for variant in VARIANTS:
-        print(f"Build {base_container_name}:{variant}", flush=True)
-        rebuild_branch(base_container_name, base_dockerfile, metadata_latest_version, variant, unversioned=True)
+        print(f"Build {base_name}:{variant}", flush=True)
+        rebuild_branch(base_name, base_dockerfile, metadata_latest_version, variant, unversioned=True)
         for child_dockerfile in base_dockerfile.glob('*/Dockerfile'):
-            child_container_name = child_dockerfile.parent.name
-            container_name = f"{base_container_name}-{child_container_name}"
+            child_name = child_dockerfile.parent.name
+            container_name = f"{base_name}-{child_name}"
             print(f"Build {container_name}:{variant}", flush=True)
             rebuild_branch(container_name, child_dockerfile, metadata_latest_version, variant, unversioned=True)
