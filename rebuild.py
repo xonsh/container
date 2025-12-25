@@ -4,6 +4,7 @@ import json
 import tempfile
 import subprocess
 from pathlib import Path
+from contextlib import chdir
 
 VARIANTS = [
     '',
@@ -17,54 +18,47 @@ def get_json(url):
         return json.load(resp)
 
 
-def build_dockerfile(fobj, *, which='xonsh', variant=None, version=None):
-    """
-    Write out a Dockerfile for the given variant and xonsh version.
-
-    Variant should match one of the python container tag suffixes (eg slim, alpine)
-    """
-    fobj.write(Path(f"templates/Dockerfile.{which}").read_text().format(
+def build_dockerfile(source_dockerfile, target_dockerfile, *, variant=None, version=None):
+    """Format source_file and save to target_file."""
+    target_dockerfile.write(Path(source_dockerfile).read_text().format(
         dashvariant=f"-{variant}" if variant else "",
         colonvariant=f":{variant}" if variant else "",
         specifier=f"=={version}" if version else ""
     ))
 
 
-def rebuild_branch(which, version, variant, *, unversioned=False):
+def rebuild_branch(container_name, source_dockerfile:Path, version, variant, *, unversioned=False):
     if variant:
-        tags = [f"xonsh/{which}:{version}-{variant}"]
+        tags = [f"xonsh/{container_name}:{version}-{variant}"]
     else:
-        tags = [f"xonsh/{which}:{version}"]
+        tags = [f"xonsh/{container_name}:{version}"]
 
     if unversioned:
         if variant:
-            tags += [f"xonsh/{which}:{variant}"]
+            tags += [f"xonsh/{container_name}:{variant}"]
         else:
-            tags += [f"xonsh/{which}:latest"]
+            tags += [f"xonsh/{container_name}:latest"]
 
-    print(f"== Building {which} {version} {variant} ==", flush=True)
+    print(f"== Building {container_name} {version} {variant} ==", flush=True)
 
-    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as ntf:
-        build_dockerfile(ntf, which=which, version=version, variant=variant)
-        ntf.flush()
-        ntf.seek(0)
+    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as target_dockerfile:
+        build_dockerfile(source_dockerfile, target_dockerfile, version=version, variant=variant)
+        target_dockerfile.flush()
+        target_dockerfile.seek(0)
 
-        subprocess.run(
-            ["docker", "build", *(f"--tag={t}" for t in tags), "-f-", "."],
-            stdin=ntf, check=True,
-        )
+        with chdir(source_dockerfile.parent):
+            subprocess.run(
+                ["docker", "build", *(f"--tag={t}" for t in tags), "-f-", "."],
+                stdin=target_dockerfile, check=True,
+            )
 
     for t in tags:
         print(f"== Pushing {t} ==", flush=True)
-        subprocess.run(
-            ["docker", "push", t],
-            check=True,
-        )
+        subprocess.run(["docker", "push", t], check=True,)
 
 
 metadata = get_json("https://pypi.org/pypi/xonsh/json")
-
-latest = metadata['info']['version']
+metadata_latest_version = metadata['info']['version']
 
 # Do this to publish all versions
 # versions = metadata['releases'].keys()
@@ -72,7 +66,13 @@ latest = metadata['info']['version']
 #     for variant in VARIANTS:
 #         rebuild_branch(version, variant, unversioned=(version == latest))
 
-for container in ('xonsh', 'action', 'interactive'):
+for base_container_path in Path('./containers/').glob('*/'):
+    base_container_name = base_container_path.name
     for variant in VARIANTS:
-        rebuild_branch(container, latest, variant, unversioned=True)
-        print("", flush=True)
+        print(f"Build {base_container_name}:{variant}", flush=True)
+        rebuild_branch(base_container_name, base_container_path / 'Dockerfile', metadata_latest_version, variant, unversioned=True)
+        for child_container_path in base_container_path.glob('*/'):
+            child_container_name = child_container_path.name
+            container_name = f"{base_container_name}-{child_container_name}"
+            print(f"Build {container_name}:{variant}", flush=True)
+            rebuild_branch(container_name, child_container_path / 'Dockerfile', metadata_latest_version, variant, unversioned=True)
