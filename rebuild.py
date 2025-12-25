@@ -82,6 +82,6 @@ if __name__ == '__main__':
                 # Backwards compatibility
                 if container_name == 'xonsh-interactive':
                     rebuild_branch('interactive', child_dockerfile, metadata_latest_version, variant, unversioned=True)
-                if container_name == 'xonsh-github-action':
+                elif container_name == 'xonsh-github-action':
                     rebuild_branch('action', child_dockerfile, metadata_latest_version, variant, unversioned=True)
 
