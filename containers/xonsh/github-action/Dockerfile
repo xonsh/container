@@ -4,7 +4,6 @@ LABEL "repository"="http://github.com/xonsh/container"
 LABEL "homepage"="https://xon.sh/"
 LABEL "maintainer"="Jamie Bliss <jamie@ivyleav.es>"
 
-RUN xpip install xonsh[linux,ptk,pygments]{specifier}
-COPY interactive.xsh /etc/xonshrc
+COPY rc_action.xsh /etc/xonsh/rc.d/100_rc_action.xsh
 
 CMD ["/usr/bin/xonsh"]
