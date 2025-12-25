@@ -2,7 +2,7 @@
 
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/xonsh)
 
-Xonsh is a Python-powered, cross-platform, Unix-gazing shell language and command prompt. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
 
 ## Additions
 
@@ -21,13 +21,11 @@ Xonsh is a Python-powered, cross-platform, Unix-gazing shell language and comman
 
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/action)
 
-Xonsh is a Python-powered, cross-platform, Unix-gazing shell language and command prompt. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
 
 This container includes code to help with GitHub Actions. It automatically
 parses the input and configures GitHub API client libraries.
 [PyGithub](https://pygithub.readthedocs.io/) and [gqlmod](https://gqlmod.readthedocs.io/) are supported (but not installed by default).
-
-To use this, include `source /etc/xonshrc` as soon as possible in your script.
 
 ## Additions
 * `$GITHUB_EVENT`: The parsed event payload
@@ -52,7 +50,7 @@ these:
 # xonsh for interactive use
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/interactive)
 
-Xonsh is a Python-powered, cross-platform, Unix-gazing shell language and command prompt. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
 
 This container includes additional dependencies and some configuration tweaks
 specifically for interactive use.
