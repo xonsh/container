@@ -12,6 +12,8 @@ VARIANTS = [
     'alpine'
 ]
 
+PLATFORMS = "linux/amd64,linux/arm64"
+
 
 def get_json(url):
     with urllib.request.urlopen(url) as resp:
@@ -39,7 +41,7 @@ def rebuild_branch(container_name, source_dockerfile:Path, version, variant, *, 
         else:
             tags += [f"xonsh/{container_name}:latest"]
 
-    print(f"== Building {container_name} {version} {variant} ==", flush=True)
+    print(f"== Building and pushing {container_name} {version} {variant} ({PLATFORMS}) ==", flush=True)
 
     with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as target_dockerfile:
         build_dockerfile(source_dockerfile, target_dockerfile, version=version, variant=variant)
@@ -48,13 +50,15 @@ def rebuild_branch(container_name, source_dockerfile:Path, version, variant, *, 
 
         with chdir(source_dockerfile.parent):
             subprocess.run(
-                ["docker", "build", *(f"--tag={t}" for t in tags), "-f-", "."],
+                [
+                    "docker", "buildx", "build",
+                    f"--platform={PLATFORMS}",
+                    *(f"--tag={t}" for t in tags),
+                    "--push",
+                    "-f-", ".",
+                ],
                 stdin=target_dockerfile, check=True,
             )
-
-    for t in tags:
-        print(f"== Pushing {t} ==", flush=True)
-        subprocess.run(["docker", "push", t], check=True,)
 
 
 
