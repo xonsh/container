@@ -73,7 +73,7 @@ if __name__ == '__main__':
         for variant in VARIANTS:
             print(f"Build {base_name}:{variant}", flush=True)
             rebuild_branch(base_name, base_dockerfile, metadata_latest_version, variant, unversioned=True)
-            for child_dockerfile in base_dockerfile.glob('*/Dockerfile'):
+            for child_dockerfile in base_dockerfile.parent.glob('*/Dockerfile'):
                 child_name = child_dockerfile.parent.name
                 container_name = f"{base_name}-{child_name}"
                 print(f"Build {container_name}:{variant}", flush=True)
