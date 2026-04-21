@@ -26,3 +26,43 @@ jobs:
 
       - name: Build and push images
         run: ./rebuild.py
+
+      - name: Sync description — xonsh/xonsh
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xonsh/xonsh
+          readme-filepath: ./containers/xonsh/README.md
+
+      - name: Sync description — xonsh/xonsh-interactive
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xonsh/xonsh-interactive
+          readme-filepath: ./containers/xonsh/interactive/README.md
+
+      - name: Sync description — xonsh/interactive (backwards-compat)
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xonsh/interactive
+          readme-filepath: ./containers/xonsh/interactive/README.md
+
+      - name: Sync description — xonsh/xonsh-github-action
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xonsh/xonsh-github-action
+          readme-filepath: ./containers/xonsh/github-action/README.md
+
+      - name: Sync description — xonsh/action (backwards-compat)
+        uses: peter-evans/dockerhub-description@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: xonsh/action
+          readme-filepath: ./containers/xonsh/github-action/README.md
