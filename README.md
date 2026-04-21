@@ -2,7 +2,7 @@
 
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/xonsh)
 
-Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
 
 ## Additions
 
@@ -21,7 +21,7 @@ Xonsh is a Python-powered shell. Full-featured and cross-platform. The language 
 
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/action)
 
-Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
 
 This container includes code to help with GitHub Actions. It automatically
 parses the input and configures GitHub API client libraries.
@@ -50,7 +50,7 @@ these:
 # xonsh for interactive use
 [GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/interactive)
 
-Xonsh is a Python-powered shell. Full-featured and cross-platform. The language is a superset of Python 3.5+ with additional shell primitives that you are used to from Bash and IPython. It works on all major systems including Linux, Mac OSX, and Windows. Xonsh is meant for the daily use of experts and novices alike.
+Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
 
 This container includes additional dependencies and some configuration tweaks
 specifically for interactive use.
