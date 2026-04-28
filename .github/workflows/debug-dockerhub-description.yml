@@ -1,0 +1,87 @@
+name: debug-dockerhub-description
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show README size and first lines
+        run: |
+          echo "== ./containers/xonsh/README.md =="
+          wc -c ./containers/xonsh/README.md
+          echo "----- first 20 lines -----"
+          head -n 20 ./containers/xonsh/README.md
+          echo "----- end -----"
+
+      - name: Probe Docker Hub description API
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          set -eu
+
+          # Build auth body with jq so the secret is never embedded into a shell-interpolated string.
+          jq -nc --arg u "$DOCKERHUB_USERNAME" --arg s "$DOCKERHUB_TOKEN" \
+            '{identifier:$u, secret:$s}' > /tmp/auth_body.json
+
+          echo "== POST /v2/auth/token =="
+          auth_code=$(curl -sS -o /tmp/auth.json -w "%{http_code}" \
+            -X POST https://hub.docker.com/v2/auth/token \
+            -H 'Content-Type: application/json' \
+            --data-binary @/tmp/auth_body.json)
+          shred -u /tmp/auth_body.json 2>/dev/null || rm -f /tmp/auth_body.json
+
+          echo "HTTP status: $auth_code"
+          echo "Response keys: $(jq -r 'keys | join(", ")' /tmp/auth.json 2>/dev/null || echo '<not JSON>')"
+          # NB: We deliberately do NOT print the response body — it contains the token.
+
+          token=$(jq -r '.access_token // .token // empty' /tmp/auth.json)
+          rm -f /tmp/auth.json
+          if [ -z "$token" ]; then
+            echo "::error::Failed to obtain token (status $auth_code)"
+            exit 1
+          fi
+          # Mask the token in logs in case anything below echoes it accidentally.
+          echo "::add-mask::$token"
+          echo "Token acquired (length: ${#token})"
+
+          echo "== PATCH /v2/repositories/xonsh/xonsh =="
+          jq -Rs '{full_description: .}' ./containers/xonsh/README.md > /tmp/body.json
+          echo "Body size: $(wc -c < /tmp/body.json) bytes"
+
+          patch_code=$(curl -sS -o /tmp/patch.out -D /tmp/patch.headers -w "%{http_code}" \
+            -X PATCH https://hub.docker.com/v2/repositories/xonsh/xonsh \
+            -H "Authorization: Bearer ${token}" \
+            -H 'Content-Type: application/json' \
+            --data-binary @/tmp/body.json)
+          # Token used; clear it from this shell. (It is short-lived anyway.)
+          unset token
+          rm -f /tmp/body.json
+
+          echo "HTTP status: $patch_code"
+          echo "----- response headers -----"
+          # Drop any Set-Cookie just in case it includes a session.
+          grep -vi '^set-cookie:' /tmp/patch.headers || true
+          echo "----- response body (first 4000 chars) -----"
+          head -c 4000 /tmp/patch.out
+          echo
+          echo "----- end -----"
+          rm -f /tmp/patch.out /tmp/patch.headers
+
+          case "$patch_code" in
+            2*)
+              echo "::notice::PATCH succeeded — description sync would work"
+              ;;
+            *)
+              if grep -qiE 'cloudflare|cf-ray|attention required|sorry, you have been blocked' /tmp/patch.out /tmp/patch.headers 2>/dev/null; then
+                echo "::error::403 came from Cloudflare WAF — README content triggered the block"
+              else
+                echo "::error::PATCH failed with $patch_code — likely PAT scope or org admin role"
+              fi
+              exit 1
+              ;;
+          esac
