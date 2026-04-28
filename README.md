@@ -1,72 +1,79 @@
-# xonsh
+# xonsh containers
 
-[GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/xonsh)
+Docker images for [xonsh](https://xon.sh) — a Python-powered shell.
 
-Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
+Built daily from the latest PyPI release for `linux/amd64` and `linux/arm64`.
 
-## Additions
+## Containers
 
-* `/usr/bin/xpip`: `xpip` usable from Dockerfiles/etc to enable installing
-  Python packages into the xonsh environment. Doesn't require cleanup.
-* `/usr/bin/xonsh`: xonsh itself.
-
-## Tags
-
-* `<version>`/`latest`: Based on `python:3` (Debian Buster)
-* `<version>-slim`/`slim`: Based on `python:3-slim` (Debian Buster, slim variant)
-* `<version>-alpine`/`alpine`: Based on `python:3-alpine` (Alpine Linux)
-
-
-# xonsh for github actions
-
-[GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/xonsh-github-action)
-
-Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
-
-This container includes code to help with GitHub Actions. It automatically
-parses the input and configures GitHub API client libraries.
-[PyGithub](https://pygithub.readthedocs.io/) and [gqlmod](https://gqlmod.readthedocs.io/) are supported (but not installed by default).
-
-## Additions
-* `$GITHUB_EVENT`: The parsed event payload
-* `$INPUT`: A dictionary of input values (the `with` block in the workflow config)
-* If PyGithub is installed, `$GITHUB` is the client object
-
-The GitHub Token is looked for as `GITHUB_TOKEN` in the environment and inputs.
-
-In addition, this container inherits from the main xonsh container and includes
-these:
-* `/usr/bin/xpip`: `xpip` usable from Dockerfiles/etc to enable installing
-  Python packages into the xonsh environment. Doesn't require cleanup.
-* `/usr/bin/xonsh`: xonsh itself.
+* [`xonsh/xonsh`](https://hub.docker.com/r/xonsh/xonsh) — Base image. Minimal xonsh installation, suitable as a build base or for non-interactive scripts.
+* [`xonsh/xonsh-interactive`](https://hub.docker.com/r/xonsh/xonsh-interactive) — Interactive shell. Adds `prompt_toolkit` and `pygments`; history is disabled.
+* [`xonsh/xonsh-github-action`](https://hub.docker.com/r/xonsh/xonsh-github-action) — For GitHub Actions. Parses `$GITHUB_EVENT`, exposes `$INPUT`; PyGithub/gqlmod-ready.
 
 ## Tags
 
-* `<version>`/`latest`: Based on `xonsh`/`python:3` (Debian Buster)
-* `<version>-slim`/`slim`: Based on `xonsh:slim`/`python:3-slim` (Debian Buster, slim variant)
-* `<version>-alpine`/`alpine`: Based on `xonsh:alpine`/`python:3-alpine` (Alpine Linux)
+Each image publishes the same set of tags:
 
+* `latest` / `<version>` — based on `python:3` (Debian)
+* `slim` / `<version>-slim` — based on `python:3-slim`
+* `alpine` / `<version>-alpine` — based on `python:3-alpine`
 
-# xonsh for interactive use
-[GitHub](https://github.com/xonsh/container) | [Docker Hub](https://hub.docker.com/r/xonsh/xonsh-interactive)
+`<version>` is the xonsh version on PyPI, e.g. `0.23.2`.
 
-Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python-based shell. The language is a superset of Python 3 with seamless integration of shell functionality and commands. It works on all major systems including Linux, macOS, and Windows. Xonsh is meant for the daily use of experts and novices.
+## Usage
 
-This container includes additional dependencies and some configuration tweaks
-specifically for interactive use.
+Run xonsh once:
 
-## Additions
-* Prompt Toolkit and Pygments are installed
-* Saving history is disabled
+```sh
+docker run --rm xonsh/xonsh -c 'echo $(uname -a)'
+```
 
-In addition, this container inherits from the main xonsh container and includes
-these:
-* `/usr/bin/xpip`: `xpip` usable from Dockerfiles/etc to enable installing
-  Python packages into the xonsh environment. Doesn't require cleanup.
-* `/usr/bin/xonsh`: xonsh itself.
+Interactive shell:
 
-## Tags
+```sh
+docker run --rm -it xonsh/xonsh-interactive
+```
 
-* `<version>`/`latest`: Based on `xonsh`/`python:3` (Debian Buster)
-* `<version>-slim`/`slim`: Based on `xonsh:slim`/`python:3-slim` (Debian Buster, slim variant)
-* `<version>-alpine`/`alpine`: Based on `xonsh:alpine`/`python:3-alpine` (Alpine Linux)
+Mount the current directory and start an interactive session in it:
+
+```sh
+docker run --rm -it -v "$PWD:/work" -w /work xonsh/xonsh-interactive
+```
+
+Run a local `.xsh` script:
+
+```sh
+docker run --rm -v "$PWD:/work" -w /work xonsh/xonsh xonsh ./script.xsh
+```
+
+Pin a specific version and use the slim variant:
+
+```sh
+docker run --rm xonsh/xonsh:0.23.2-slim -c '2 + 2'
+```
+
+Use as a base image:
+
+```Dockerfile
+FROM xonsh/xonsh:alpine
+RUN xpip install requests
+COPY ./build.xsh /build.xsh
+CMD ["xonsh", "/build.xsh"]
+```
+
+Use in GitHub Actions:
+
+```yaml
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    container: xonsh/xonsh-github-action
+    steps:
+      - run: echo $GITHUB_EVENT['repository']['full_name']
+        shell: xonsh {0}
+```
+
+## Dev
+
+Images are built and pushed to Docker Hub from [`.github/workflows/build.yml`](./.github/workflows/build.yml). The build script ([`rebuild.xsh`](./rebuild.xsh)) is itself a xonsh script, executed in CI via [`xonsh/actions`](https://github.com/xonsh/actions) — the GitHub Action that installs xonsh on the runner.
+

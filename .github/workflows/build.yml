@@ -5,7 +5,7 @@ on:
     branches: [main]
   schedule:
     # Rebuild daily to pick up new xonsh releases from PyPI
-    - cron: '17 3 * * *'
+    - cron: '42 3 * * *'
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - uses: xonsh/actions@v1
         with:
           python-version: '3.12'
 
@@ -31,7 +31,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push images
-        run: ./rebuild.py
+        run: xonsh ./rebuild.xsh
 
       - name: Sync description — xonsh/xonsh
         uses: peter-evans/dockerhub-description@v4

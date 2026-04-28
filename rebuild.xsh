@@ -1,8 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/env xonsh
 import urllib.request
 import json
 import tempfile
-import subprocess
+import os
 from pathlib import Path
 from contextlib import chdir
 
@@ -43,22 +43,16 @@ def rebuild_branch(container_name, source_dockerfile:Path, version, variant, *, 
 
     print(f"== Building and pushing {container_name} {version} {variant} ({PLATFORMS}) ==", flush=True)
 
-    with tempfile.TemporaryFile(mode='w+t', encoding='utf-8') as target_dockerfile:
+    with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', suffix='.Dockerfile', delete=False) as target_dockerfile:
         build_dockerfile(source_dockerfile, target_dockerfile, version=version, variant=variant)
-        target_dockerfile.flush()
-        target_dockerfile.seek(0)
+        dockerfile_path = target_dockerfile.name
 
+    try:
+        tag_args = [f"--tag={t}" for t in tags]
         with chdir(source_dockerfile.parent):
-            subprocess.run(
-                [
-                    "docker", "buildx", "build",
-                    f"--platform={PLATFORMS}",
-                    *(f"--tag={t}" for t in tags),
-                    "--push",
-                    "-f-", ".",
-                ],
-                stdin=target_dockerfile, check=True,
-            )
+            docker buildx build @(f"--platform={PLATFORMS}") @(tag_args) --push -f @(dockerfile_path) .
+    finally:
+        os.unlink(dockerfile_path)
 
 
 
@@ -82,4 +76,3 @@ if __name__ == '__main__':
                 container_name = f"{base_name}-{child_name}"
                 print(f"Build {container_name}:{variant}", flush=True)
                 rebuild_branch(container_name, child_dockerfile, metadata_latest_version, variant, unversioned=True)
-
