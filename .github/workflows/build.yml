@@ -16,7 +16,7 @@ jobs:
 
       - uses: xonsh/actions@v2
         with:
-          python-version: '3.12'
+          python-version: '3.14'
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v4

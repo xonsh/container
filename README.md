@@ -14,9 +14,9 @@ Built daily from the latest PyPI release for `linux/amd64` and `linux/arm64`.
 
 Each image publishes the same set of tags:
 
-* `latest` / `<version>` — based on `python:3` (Debian)
-* `slim` / `<version>-slim` — based on `python:3-slim`
-* `alpine` / `<version>-alpine` — based on `python:3-alpine`
+* `latest` / `<version>` — based on `python:3.14` (Debian Trixie)
+* `slim` / `<version>-slim` — based on `python:3.14-slim`
+* `alpine` / `<version>-alpine` — based on `python:3.14-alpine`
 
 `<version>` is the xonsh version on PyPI, e.g. `0.23.2`.
 

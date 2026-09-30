@@ -12,6 +12,6 @@ Xonsh (sounds like "consh") is a modern, full-featured and cross-platform Python
 
 ## Tags
 
-* `<version>`/`latest`: Based on `python:3` (Debian Buster)
-* `<version>-slim`/`slim`: Based on `python:3-slim` (Debian Buster, slim variant)
-* `<version>-alpine`/`alpine`: Based on `python:3-alpine` (Alpine Linux)
+* `<version>`/`latest`: Based on `python:3.14` (Debian Trixie)
+* `<version>-slim`/`slim`: Based on `python:3.14-slim` (Debian Trixie, slim variant)
+* `<version>-alpine`/`alpine`: Based on `python:3.14-alpine` (Alpine Linux)

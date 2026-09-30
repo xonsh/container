@@ -1,4 +1,4 @@
-FROM python:3.11{dashvariant}
+FROM python:3.14{dashvariant}
 
 LABEL "repository"="https://github.com/xonsh/container"
 LABEL "homepage"="https://xon.sh/"
