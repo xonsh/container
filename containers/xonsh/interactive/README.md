@@ -19,6 +19,6 @@ these:
 
 ## Tags
 
-* `<version>`/`latest`: Based on `xonsh`/`python:3` (Debian Buster)
-* `<version>-slim`/`slim`: Based on `xonsh:slim`/`python:3-slim` (Debian Buster, slim variant)
-* `<version>-alpine`/`alpine`: Based on `xonsh:alpine`/`python:3-alpine` (Alpine Linux)
+* `<version>`/`latest`: Based on `xonsh`/`python:3.14` (Debian Trixie)
+* `<version>-slim`/`slim`: Based on `xonsh:slim`/`python:3.14-slim` (Debian Trixie, slim variant)
+* `<version>-alpine`/`alpine`: Based on `xonsh:alpine`/`python:3.14-alpine` (Alpine Linux)
